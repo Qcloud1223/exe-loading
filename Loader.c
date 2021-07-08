@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <dlfcn.h>
 #include <elf.h>
+#include <link.h>
 
 void rewrite(const char *filename)
 {
@@ -70,9 +71,9 @@ static void debug_stop()
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2)
+    if (argc != 2 && argc != 3)
     {
-        fprintf(stderr, "usage: ./Loader [exe name]\n");
+        fprintf(stderr, "usage: ./Loader [exe name] (optional)[address of main]\n");
         exit(-1);
     }
     rewrite(argv[1]);
@@ -91,8 +92,24 @@ int main(int argc, char *argv[])
     int (*main1)() = dlsym(handle1, "main");
 
     // debug_stop();
-
-    main1();
-
+    if (main1 != NULL)
+        main1();
+    else
+    {
+        if(argc == 3)
+        {
+            printf("using address of main at %s\n", argv[2]);
+            unsigned long main_num = strtoul(argv[2], NULL, 0);
+            struct link_map *l = (struct link_map *)handle1;
+            main_num += l->l_addr;
+            main1 = (void *)main_num;
+            main1();
+        }
+        else
+        {
+            fprintf(stderr, "cannot find main of executable, nor you provide one. Try recompile with rdynamic\n");
+            exit(-1);
+        }
+    }
     return 0;
 }
