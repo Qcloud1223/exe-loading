@@ -1,6 +1,8 @@
 // 'clean' version of a rewriter and loader
-// To run:
-// LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/ gdb --args  ./Loader /home/hypermoon/Qcloud/change-ELF/test/time
+// To start loader:
+// LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/ ./Loader [path to executable]
+// To debug loader:
+// LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/ gdb --args ./Loader [path to executable]
 // patched ELF outputs at /usr/local/lib, so it's necessary to include it as a library path
 
 #define _GNU_SOURCE
